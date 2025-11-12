@@ -40,18 +40,17 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 
-// ✅ Import your routes
-const indexRouter = require("./routes/indexxx"); // 👈 make sure file name matches (not indexxx.js)
+// ✅ Import routes
+const indexRouter = require("./routes/indexxx");
 
 // ✅ Use routes
 app.use("/", indexRouter);
 
-// ✅ Default route
+// ✅ Root check
 app.get("/", (req, res) => {
-  res.send("✅ Backend is running and connected to MongoDB!");
+  res.send("✅ Backend is running!");
 });
 
-// ✅ Start server
 app.listen(port, () => {
   console.log(`✅ Server is running on port ${port}`);
 });
