@@ -1,49 +1,55 @@
-const connectDB = require("../db");
-const { ObjectId } = require("mongodb");
-
-// Get all student data
-exports.getStudentdata = async (req, res) => {
+const database = require('../database/db');
+const getStudentdata = async (req, res) => {
   try {
-    const db = await connectDB();
-    const data = await db.collection("students").find().toArray();
-    res.json(data);
+    const db = await database();
+    const collection = db.collection('student');
+    const result = await collection.find().toArray(); // ✅ FIXED: call find() before toArray()
+    res.send(result);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("❌ Error fetching data:", err);
+    res.status(500).send({ error: "Failed to fetch student data" });
   }
 };
 
-// Insert a new student
-exports.insertStudentdata = async (req, res) => {
+const insertStudentdata = async (req, res) => {
   try {
-    const db = await connectDB();
-    const result = await db.collection("students").insertOne(req.body);
-    res.json({ success: true, insertedId: result.insertedId });
+    console.log("🟢 Inserting data:", req.body);
+    const db = await database();
+    const collection = db.collection('student');
+    const result = await collection.insertOne(req.body);
+    res.send(result);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("❌ Error inserting data:", err);
+    res.status(500).send({ error: "Failed to insert student data" });
+  }
+};
+const { ObjectId } = require('mongodb');
+const deleteStudentdata = async (req, res) => {
+  try {
+    const db = await database();
+    const collection = db.collection('student');
+    const result = await collection.deleteOne({ _id: new ObjectId(req.params.id) });
+    res.send(result);
+  } catch (err) {
+    console.error("❌ Error deleting data:", err);
+    res.status(500).send({ error: "Failed to delete student data" });
   }
 };
 
-// Update student by ID
-exports.updateStudentdata = async (req, res) => {
+const updateStudentdata = async (req, res) => {
   try {
-    const db = await connectDB();
-    await db.collection("students").updateOne(
-      { _id: new ObjectId(req.params.id) },
-      { $set: req.body }
+    const db = await database();
+    const collection = db.collection('student');
+    const id = req.params.id;
+    const updatedData = req.body;
+    const result = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updatedData }
     );
-    res.json({ success: true });
+    res.send(result);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).send(err);
   }
 };
 
-// Delete student by ID
-exports.deleteStudentdata = async (req, res) => {
-  try {
-    const db = await connectDB();
-    await db.collection("students").deleteOne({ _id: new ObjectId(req.params.id) });
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+module.exports = { getStudentdata, insertStudentdata, deleteStudentdata, updateStudentdata };

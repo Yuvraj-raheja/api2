@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const cors = require("cors");
 const st = require("../controller/student");
 
 // Routes
@@ -9,3 +10,4 @@ router.put("/updatedata/:id", st.updateStudentdata);
 router.delete("/deletedata/:id", st.deleteStudentdata);
 
 module.exports = router;
+
