@@ -6,7 +6,7 @@ const port = 3000;
 app.use(express.json());
 
 // Import routes
-const indexRouter = require('./routes/indexxx');
+const indexRouter = require('./server');
 
 // Use routes
 app.use('/', indexRouter);
