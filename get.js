@@ -1,30 +1,31 @@
 const express = require('express');
 const cors = require('cors');
-const app = express();
+const connectDB = require('./database/db');
 
-// ✅ Use any port (Render will assign its own PORT in production)
+
+const app = express();
 const port = process.env.PORT || 3000;
 
-// ✅ Middleware
 app.use(express.json());
 app.use(cors());
 
-// ✅ Sample GET route
-app.get('/getdata', (req, res) => {
-  const data = [
-    { id: 1, name: "Yuvraj Raheja", age: 22 },
-    { id: 2, name: "Sneha Gupta", age: 24 },
-    { id: 3, name: "Rohit Sharma", age: 27 }
-  ];
-  res.json(data);
+// ✅ Route to fetch data from MongoDB
+app.get('/getdata', async (req, res) => {
+  try {
+    const db = await connectDB();
+    const collection = db.collection('student'); // change to your collection name
+    const data = await collection.find().toArray();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
-// ✅ Default route
 app.get('/', (req, res) => {
-  res.send('Server is running successfully 🚀');
+  res.send('✅ Backend connected to MongoDB!');
 });
 
-// ✅ Start the server
 app.listen(port, () => {
-  console.log(`✅ Server is running on port ${port}`);
+  console.log(`✅ Server running on port ${port}`);
 });
