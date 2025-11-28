@@ -1,4 +1,5 @@
 const database = require('../database/db');
+const jw = require('./auth');
 
 const getUserdata = async (req, res) => {
   try {
@@ -8,10 +9,11 @@ const getUserdata = async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return res.status(400).send({
-        status: "missing fields",
-        statuscode: 400,
-        message: "Username and password are required"
+      const token = jw.generateToken({ username: username });
+      return res.status(200).send({
+        status: "success",
+        statuscode: 200,
+        data: token
       });
     }
 

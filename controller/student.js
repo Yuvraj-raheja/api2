@@ -1,15 +1,24 @@
 const database = require('../database/db');
+const jw = require('./auth');
+ 
 const getStudentdata = async (req, res) => {
   try {
+    const resultnew = jw.verifyToken(req.body.token);
+    if (!resultnew.valid) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+    else {
     const db = await database();
     const collection = db.collection('student');
-    const result = await collection.find().toArray(); // ✅ FIXED: call find() before toArray()
+    const result = await collection.find().toArray();
     res.send(result);
+    }
   } catch (err) {
     console.error("❌ Error fetching data:", err);
     res.status(500).send({ error: "Failed to fetch student data" });
   }
 };
+
 
 const insertStudentdata = async (req, res) => {
   try {
