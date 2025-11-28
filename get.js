@@ -38,18 +38,24 @@ const port = process.env.PORT || 3000;
 
 // ✅ Middleware
 app.use(express.json());
+app.set("view engine", "ejs");
+app.set("views", "./views");
 app.use(cors());
 
 // ✅ Import routes
-const indexRouter = require("./routes/indexxx");
+//const indexRouter = require("./routes/indexxx");
 
 // ✅ Use routes
-app.use("/", indexRouter);
+//app.use("/", indexRouter);
 
 // ✅ Root check
-app.get("/", (req, res) => {
-  res.send("✅ Backend is running!");
-});
+//app.get("/", (req, res) => {
+  //res.send("✅ Backend is running!");
+//});
+const {swaggerUi, swaggerSpec}=require('./swagger');
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+//app.use("/api/v1", indexRouter);
+
 
 app.listen(port, () => {
   console.log(`✅ Server is running on port ${port}`);
